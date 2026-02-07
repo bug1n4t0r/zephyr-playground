@@ -31,14 +31,18 @@ int main(void) {
   printk("\r\n[UART TX]: Hello from Zephyr");
 
   while (1) {
-    int v = gpio_pin_get_dt(&btn);
+    static bool logON = false;
+    int         v     = gpio_pin_get_dt(&btn);
 
     if (v >= 0) {
       gpio_pin_set_dt(&led, v);
 
-      if (v >= 1) {
-
+      if ((v >= 1) && (!logON)) {
+        logON = true;
         printk("\r\n[UART TX]: LED ON! %i", (int32_t)v);
+      } else if ((v == 0) && (logON)) {
+        logON = false;
+        printk("\r\n[UART TX]: LED OFF! %i", (int32_t)v);
       }
     }
 
